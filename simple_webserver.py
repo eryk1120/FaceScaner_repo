@@ -72,16 +72,15 @@ class MyServer(BaseHTTPRequestHandler):
         if post_data == 'On':
             for i in range(10):
                 GPIO.output(led, GPIO.HIGH)
-                time.sleep(0.2)
+                sleep(0.2)
                 GPIO.output(led, GPIO.LOW)
-                time.sleep(0.2)
+                sleep(0.2)
                 print('Switch status = ', GPIO.input(switch))
 
         else:
             GPIO.output(18, GPIO.LOW)
         print("LED is {}".format(post_data))
-        self._redirect('/')  # Redirect back to the root url
-
+        self._redirect('/') 
 
 if __name__ == '__main__':
     http_server = HTTPServer((host_name, host_port), MyServer)
