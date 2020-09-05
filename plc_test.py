@@ -72,8 +72,22 @@ if p is not None:
                     print("")
                     # Setting the relays and digital outputs to a pattern which can be toggled later.
                     # Side effect: the LEDs on the PiXtend V2 -L- board alternate nicely back and forth.
-
-                    p.digital_out0 = p.ON
+                    p.relay0 = p.OFF
+                    p.relay1 = p.OFF
+                    p.relay2 = p.OFF
+                    p.relay3 = p.OFF
+                    p.digital_out0 = p.OFF
+                    p.digital_out1 = p.OFF
+                    p.digital_out2 = p.OFF
+                    p.digital_out3 = p.OFF
+                    p.digital_out4 = p.OFF
+                    p.digital_out5 = p.OFF
+                    p.digital_out6 = p.OFF
+                    p.digital_out7 = p.OFF
+                    p.digital_out8 = p.OFF
+                    p.digital_out9 = p.OFF
+                    p.digital_out10 = p.OFF
+                    p.digital_out11 = p.OFF
 
                 # clear the text on screen
                 str_text = "                                               \n"
@@ -115,7 +129,23 @@ if p is not None:
                 str_text += "Digital Outputs:\n"
                 str_text += "DigitalOut00: {0}\n".format(p.digital_out0)
                 str_text += "DigitalOut01: {0}\n".format(p.digital_out1)
+                str_text += "DigitalOut02: {0}\n".format(p.digital_out2)
+                str_text += "DigitalOut03: {0}\n".format(p.digital_out3)
+                str_text += "DigitalOut04: {0}\n".format(p.digital_out4)
+                str_text += "DigitalOut05: {0}\n".format(p.digital_out5)
+                str_text += "DigitalOut06: {0}\n".format(p.digital_out6)
+                str_text += "DigitalOut07: {0}\n".format(p.digital_out7)
+                str_text += "DigitalOut08: {0}\n".format(p.digital_out8)
+                str_text += "DigitalOut09: {0}\n".format(p.digital_out9)
                 str_text += "DigitalOut10: {0}\n".format(p.digital_out10)
+                str_text += "DigitalOut11: {0}\n".format(p.digital_out11)
+                str_text += " \n"
+                str_text += "Relays:\n"
+                str_text += "Relay0:      {0}\n".format(p.relay0)
+                str_text += "Relay1:      {0}\n".format(p.relay1)
+                str_text += "Relay2:      {0}\n".format(p.relay2)
+                str_text += "Relay3:      {0}\n".format(p.relay3)
+                str_text += " "
 
                 # Print text to console
                 print(str_text, end="\r")
@@ -125,14 +155,11 @@ if p is not None:
                     sys.stdout.write("\x1b[A")
 
                 # Toggle the relays and digital outputs on and off
-              
-                p.digital_out0 = not p.digital_out0
-                p.digital_out10 = p.ON
-                while p.digital_in10 == p.OFF:
-                    time.sleep(0.1)
-                    p.digital_out10 = p.OFF
-                p.digital_out10 = p.ON
-
+                if p.digital_in1:
+                    p.digital_out0 = p.ON
+                else:
+                    p.digital_out0 = p.OFF
+                
 
             else:
                 for i in range(0, 45, 1):
