@@ -200,39 +200,56 @@ class my_pixtend(PiXtendV2L):
 			self.set(n,False)
 		for n in RE.keys():
 			self.set(n,False)
+	def zero_sys(self):
+	    self.digital_out0 = self.OFF
+	    self.digital_out1 = self.OFF
+	    self.digital_out2 = self.OFF
+	    self.digital_out3 = self.OFF
+	    self.digital_out4 = self.OFF
+	    self.digital_out5 = self.OFF
+	    self.digital_out6 = self.OFF
+	    self.digital_out7 = self.OFF
+	    self.digital_out8 = self.OFF
+	    self.digital_out9 = self.OFF
+	    self.digital_out10 = self.OFF
+	    self.digital_out11 = self.OFF
+	    self.relay0 = self.OFF
+	    self.relay1 = self.OFF
+	    self.relay2 = self.OFF
+	    self.relay3 = self.OFF
+
+
+if __name__ == "__main__":
+	p = my_pixtend()
+
+	print("\033c", end="")
+	print(p.raport())
+
+	p.set(name="DO0",value=True)
+
+	print("\033c", end="")
+	print(p.raport())
+
+	time.sleep(1)
+	p.set(name="DO0",value=False)
+
+	print("\033c", end="")
+	print(p.raport())
+
+	time.sleep(1)
+	p.set(name="DO2",value=True)
+
+	print("\033c", end="")
+	print(p.raport())
+
+	time.sleep(1)
+	p.set(name="DO2",value=False)
+
+	print(p.raport())
+	time.sleep(1)
 
 
 
-p = my_pixtend()
-
-print("\033c", end="")
-print(p.raport())
-
-p.set(name="DO0",value=True)
-
-print("\033c", end="")
-print(p.raport())
-
-time.sleep(1)
-p.set(name="DO0",value=False)
-
-print("\033c", end="")
-print(p.raport())
-
-time.sleep(1)
-p.set(name="DO2",value=True)
-
-print("\033c", end="")
-print(p.raport())
-
-time.sleep(1)
-p.set(name="DO2",value=False)
-
-print(p.raport())
-time.sleep(1)
-
-
-
-p.close()
-p = None
-del p
+	p.close()
+	p = None
+	del p
