@@ -1,0 +1,24 @@
+{
+  "Components": {
+    "Cam0": {
+      "TRIG": "DO0",
+      "READY": "DI0"
+    },
+    "Cam1": {
+      "TRIG": "DO1",
+      "READY": "DI1"
+    },
+    "Cam2": {
+      "TRIG": "DO2",
+      "READY": "DI2"
+    },
+    "Proj0": {
+      "TRIG": "DO4",
+      "READY": "DI4"
+    },
+    "Proj1": {
+      "TRIG": "DO5",
+      "READY": "DI5"
+    }
+  }
+}

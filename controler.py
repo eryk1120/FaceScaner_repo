@@ -81,8 +81,26 @@ def print_state(p):
 	print(p.raport())
 
 
+
+class control_center():
+	'''
+	clever description of the class
+	'''
+
+	def __init__(self):
+		self.components = {}
+
+	def __init__(self,remote, inf):
+		self.p = remote
+		self.components = {}
+
+
+
+
+
 if __name__ == "__main__":
 	try:
+		'''
 		p = px.my_pixtend()
 		p.zero_sys()
 
@@ -98,6 +116,7 @@ if __name__ == "__main__":
 		time.sleep(0.5)
 
 		print("\033c", end="")
+
 		p.zero_sys()
 
 		p.close()
@@ -110,4 +129,4 @@ if __name__ == "__main__":
 		p.close()
 		p = None
 		del p
-	
+		'''
