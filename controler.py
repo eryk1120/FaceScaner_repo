@@ -1,7 +1,7 @@
 import my_pixtend as px
-from flask import request
+#from flask import request
 import time
-
+import json
 
 
 class Aparat ():
@@ -90,9 +90,41 @@ class control_center():
 	def __init__(self):
 		self.components = {}
 
-	def __init__(self,remote, inf):
+	def __init__(self,remote, config):
 		self.p = remote
 		self.components = {}
+
+		with open("config.json", 'r') as ij:
+			temp = json.load(ij)
+			for k,v in temp["Components"].items():
+				if k.startswith("Cam"):
+					print('1: ',k,v)
+					self.components[k]= Aparat(remote=self.p,state=v["READY"],signal=v["TRIG"])
+
+
+				elif k.startswith("Proj"):
+					print('2: ',k,v)
+					self.components[k]= Projector(remote=self.p,state=v["READY"],signal=v["TRIG"])
+	def test(self):
+		while (1):
+			print("start")
+			self.components["Cam0"].shoot()
+			time.sleep(0.5)
+			self.components["Cam1"].shoot()
+			time.sleep(0.5)
+			self.components["Cam2"].shoot()
+			time.sleep(0.5)
+			print("done with cameras!")
+			self.components["Proj0"].ON()
+			time.sleep(0.5)
+			self.components["Proj1"].ON()
+			time.sleep(0.5)
+			self.p.zero_sys()
+			print("done with Projectors")
+			time.sleep(2)
+			print("DONE!")
+
+
 
 
 
@@ -100,6 +132,12 @@ class control_center():
 
 if __name__ == "__main__":
 	try:
+		p = px.my_pixtend()
+		p.zero_sys()
+
+		x = control_center(remote=p,config="config.json")
+		x.test()
+
 		'''
 		p = px.my_pixtend()
 		p.zero_sys()
@@ -116,7 +154,7 @@ if __name__ == "__main__":
 		time.sleep(0.5)
 
 		print("\033c", end="")
-
+		'''
 		p.zero_sys()
 
 		p.close()
@@ -129,4 +167,3 @@ if __name__ == "__main__":
 		p.close()
 		p = None
 		del p
-		'''
