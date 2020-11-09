@@ -1,24 +1,25 @@
 {
   "Components": {
     "Cam0": {
-      "TRIG": "DO0",
-      "READY": "DI0"
+      "IN_TRIG": 12,
+      "OUT_READY": 11
     },
     "Cam1": {
-      "TRIG": "DO1",
-      "READY": "DI1"
+      "IN_TRIG": 12,
+      "OUT_READY": 13
     },
     "Cam2": {
-      "TRIG": "DO2",
-      "READY": "DI2"
+      "IN_TRIG": 15,
+      "OUT_READY": 16
     },
     "Proj0": {
-      "TRIG": "DO4",
-      "READY": "DI4"
+      "IN_TRIG": 18,
+      "OUT_ACTIVE":22,
+      "OUT_READY": 29
     },
     "Proj1": {
-      "TRIG": "DO5",
-      "READY": "DI5"
+      "IN_TRIG": 36,
+      "OUT_READY": 32
     }
   }
 }

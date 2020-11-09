@@ -131,6 +131,22 @@ class control_center():
 
 
 if __name__ == "__main__":
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	'''
 	try:
 		p = px.my_pixtend()
 		p.zero_sys()
@@ -138,7 +154,7 @@ if __name__ == "__main__":
 		x = control_center(remote=p,config="config.json")
 		x.test()
 
-		'''
+
 		p = px.my_pixtend()
 		p.zero_sys()
 
@@ -154,7 +170,7 @@ if __name__ == "__main__":
 		time.sleep(0.5)
 
 		print("\033c", end="")
-		'''
+		
 		p.zero_sys()
 
 		p.close()
@@ -167,3 +183,4 @@ if __name__ == "__main__":
 		p.close()
 		p = None
 		del p
+'''
