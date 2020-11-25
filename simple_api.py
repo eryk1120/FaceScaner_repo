@@ -5,7 +5,7 @@ from json import dumps
 app = Flask(__name__)
 api = Api(app)
 
-todos = {}
+todos = {'0':'xD'}
 
 class TodoSimple(Resource):
      def get(self, todo_id):
@@ -21,7 +21,7 @@ class TodoSimple(Resource):
 def hello():
     return 'Hello, World'
 
-api.add_resource(TodoSimple, '/<string:todo_id>')
+api.add_resource(TodoSimple, '/api/<string:todo_id>')
 
 if __name__ == '__main__':
     app.run(debug=True, port =5012)

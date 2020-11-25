@@ -1,25 +1,13 @@
 {
   "Components": {
     "Cam0": {
-      "IN_TRIG": 12,
+      "IN_TRIG": 40,
       "OUT_READY": 11
-    },
-    "Cam1": {
-      "IN_TRIG": 12,
-      "OUT_READY": 13
-    },
-    "Cam2": {
-      "IN_TRIG": 15,
-      "OUT_READY": 16
     },
     "Proj0": {
       "IN_TRIG": 18,
-      "OUT_ACTIVE":22,
+      "OUT_ACTIVE":37,
       "OUT_READY": 29
-    },
-    "Proj1": {
-      "IN_TRIG": 36,
-      "OUT_READY": 32
     }
   }
 }
