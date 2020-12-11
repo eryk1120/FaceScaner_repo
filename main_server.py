@@ -1,7 +1,7 @@
 from flask import Flask, request,jsonify
 from flask_restful import Resource, Api
 from json import dumps
-
+import time
 app = Flask(__name__)
 api = Api(app)
 
@@ -11,22 +11,29 @@ todos = {
     2: 'paint the door',
 }
 
-
-@app.route("/api/<int:key>/", methods=['GET'])
+# todo tester
+@app.route("/api/todo", methods=['GET'])
 def give_todos():
      x = dumps(todos)
-     return x
+     return x+'\n'
 
 @app.route("/api/", methods=['PUT'])
 def new_todos():
-        notes.pop(key, None)
+        todos.pop(key, None)
         return '', status.HTTP_204_NO_CONTENT
 
-
+# website tester
 @app.route('/hello')
 def hello():
-    return 'Hello, World'
+    return """ hello world  """
 
+
+@app.route('/api/skan/',methods=['GET'])
+def make_skan():
+    print('-----------beginning skanning')
+    time.sleep(1)
+    print('-----------finished skanning')
+    return "DONE\n", 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True, port =5012)
