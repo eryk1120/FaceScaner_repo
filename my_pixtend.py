@@ -1,8 +1,36 @@
+#!/usr/bin/env python
+# coding=utf-8
+
+# fragments of code partialy borrowed from example given by
+# in pixtendv2l_demp.py suplied by PiXtend project
+
+# Copyright (C) 2018 Robin Turner
+# Qube Solutions GmbH, Arbachtalstr. 6
+# 72800 Eningen, Germany
+
+#under GNU General Public License
+
+
+
+# fragmenty kodu częśćiowo zapozyczony z przykladow udostepnionch
+# wraz projektem PiXtendV2L nalezacy prawnie do
+
+# Copyright (C) 2018 Robin Turner
+# Qube Solutions GmbH, Arbachtalstr. 6
+# 72800 Eningen, Germany
+
+# pod licencją GNU General Public License
+
+
 from pixtendv2l import PiXtendV2L
 import time
 
 
 class my_pixtend(PiXtendV2L):
+	"""
+	Klasa bedaca inkrementacja dostarczonej przez producenta bibliteki pozwalajaca
+	na inny styl adresowania wyjść i wejść urządzenia PiXtendV2l
+	"""
 
 	DO = {"DO{0}".format(n):n for n in range (0,12,1)}
 	RE = {"RE{0}".format(n):n for n in range (0,5,1)}
@@ -21,6 +49,9 @@ class my_pixtend(PiXtendV2L):
 			elif self.DO[name] == 1:
 				if value:
 					self.digital_out1 = self.ON
+					'''
+					ciąg dalszy metod
+					'''
 				else:
 					self.digital_out1 = self.OFF
 			elif self.DO[name] == 2:
@@ -195,11 +226,13 @@ class my_pixtend(PiXtendV2L):
 		str_text += "Relay3:      {0}\n".format(self.relay3)
 		str_text += "-"*20+"\n"
 		return str_text
+
 	def zero_system(self):
 		for n in DO.keys():
 			self.set(n,False)
 		for n in RE.keys():
 			self.set(n,False)
+
 	def zero_sys(self):
 	    self.digital_out0 = self.OFF
 	    self.digital_out1 = self.OFF
@@ -220,7 +253,14 @@ class my_pixtend(PiXtendV2L):
 
 
 if __name__ == "__main__":
-	p = my_pixtend()
+
+
+	# tutaj znajduje się fragment kodu używający sterownika
+	# i manipulujący jego stanem
+
+	p = my_pixtend() # stworzenie obiektu sterującego
+	camera1_trigger = "DO0"
+	p.set(name=camera1_trigger,value=True) # zmiana wartości wyjścia DO0 na high
 
 	print("\033c", end="")
 	print(p.raport())

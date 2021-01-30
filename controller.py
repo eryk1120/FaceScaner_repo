@@ -3,7 +3,7 @@ import json
 import time
 from flask_restful import Resource
 
-class Controler(Resource):
+class Controler():
     """docstring for ClassName"""
     def __init__(self,config_json):
 
@@ -26,10 +26,10 @@ class Controler(Resource):
         """
         docstring
         """
-        # napraw to eryku z przyszłości 
+        # napraw to eryku z przyszłości
         print("HIGH",self.components["Cam0"]["IN_TRIG"],type(self.components["Cam0"]["IN_TRIG"]))
         GPIO.output(self.components["Cam0"]["IN_TRIG"],GPIO.HIGH)
-        time.sleep(10)  
+        time.sleep(10)
         print("LOW",self.components["Cam0"]["IN_TRIG"],type(self.components["Cam0"]["IN_TRIG"]))
         GPIO.output(self.components["Cam0"]["IN_TRIG"],GPIO.LOW)
         time.sleep(10)
