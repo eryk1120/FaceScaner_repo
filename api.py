@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+# przykladowy fragment aplikacji siecowej sterującej ruchem stolika w lewo i zatrzymania go
+
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from flask_api import status
@@ -33,8 +35,12 @@ class my_resource(Resource):
             return status.HTTP_501_NOT_IMPLEMENTED, "unknown task given"
 
         if task == "RotLeft":
-            print ('hi')
             self.table.rot_letf()
+
+        elif task=="STOP":
+            self.table.stop()
+
+
         return status.HTTP_202_ACCEPTED,"done with taks: {}".format(task)
 
 app = Flask(__name__)
@@ -55,3 +61,8 @@ if __name__=="__main__":
 # przykładowa komenda CURL do weryfikacji działania programu
 # w terminalu bash:
 # curl -X PUT -H "Content-Type: application/json" -d '{"task":"RotLeft"}' http://localhost:5012/api
+# curl -X PUT -H "Content-Type: application/json" -d '{"task":"STOP"}' http://localhost:5012/api
+# curl -X PUT -H "Content-Type: application/json" -d '{"task":"WrongTask"}' http://localhost:5012/api
+
+# w razie problemu: odwiedzenie strony http://localhost:5012/hello
+# w dowolnej przeglądarce internetowej w celu sprawdzenia połączenia

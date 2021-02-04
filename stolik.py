@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# coding=utf-8
+
+
 import serial
 import time
 
@@ -13,7 +17,6 @@ class Table():
         self.ser.timeout=5
         self.ser.open()
 
-        print("config")
         time.sleep(self.inter_delay)
         self.ser.write(b'\x4c')
         time.sleep(self.inter_delay)
@@ -59,9 +62,14 @@ class Table():
         time.sleep(self.inter_delay)
         self.ser.write(b'\x00')
 
-        print(self.ser.read())
-        print(self.ser.read())
-        print(self.ser.read())
+        temp1 = self.ser.read()
+        temp2 = self.ser.read()
+        temp3 = self.ser.read()
+
+        if (temp1 == b'xe4' and temp2 == b'xe6'):
+            return "DONE"
+        else:
+            return "something went wrong"
 
     def rot_right(self):
         time.sleep(self.inter_delay)
@@ -105,7 +113,7 @@ class Table():
         self.ser.write(b'\xc1')
         time.sleep(self.inter_delay)
         self.ser.write(b'\x00')
-        time.sleep(self.inter_delay)
+        time.sleep(self.sseemsseemseemsseemsseemsinter_delay)
         self.ser.write(b'\x00')
 
         print(self.ser.read())
@@ -137,7 +145,6 @@ if __name__=='__main__':
             print('RIGHT')
             stolik.rot_right()
 
-        print('LOOOL')
 
         stolik.cont_right()
         time.sleep(5)
@@ -146,7 +153,7 @@ if __name__=='__main__':
         del stolik
 
     except KeyboardInterrupt:
-        print('\ntable controller stopped by user interruption')
+        print('\ntable controller stopped by user interruption\n')
         stolik.stop()
         del stolik
         print('')

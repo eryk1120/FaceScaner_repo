@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import json
 import time
-from flask_restful import Resource
 
 class Controler():
     """docstring for ClassName"""
@@ -47,17 +46,3 @@ if __name__=="__main__":
     x = Controler("config.json")
     x.test()
     del x
-
-
-
-"""
-            for k,v in temp["Components"].items():
-                if k.startswith("Cam"):
-                    print('1: ',k,v)
-                    self.components[k]= {"READY":v["READY"],"TRIG":v["TRIG"]}
-
-
-                elif k.startswith("Proj"):
-                    print('2: ',k,v)
-                    self.components[k]= {"READY":v["READY"],"TRIG":v["TRIG"],"ACTIVE":v["ACTIVE"]}
-"""
