@@ -14,12 +14,12 @@ def blink():
         GPIO.output(38,GPIO.HIGH)
         GPIO.output(37,GPIO.HIGH)
         GPIO.output(36,GPIO.HIGH)
-        time.sleep(0.5)
+        time.sleep(0.1)
         GPIO.output(40,GPIO.LOW)
         GPIO.output(38,GPIO.LOW)
         GPIO.output(37,GPIO.LOW)
         GPIO.output(36,GPIO.LOW)
-        time.sleep(3)
+        time.sleep(0.4)
 def button():
     GPIO.setup(40, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.wait_for_edge(40, GPIO.FALLING)
@@ -28,6 +28,6 @@ def button():
 
 if __name__=="__main__":
     GPIO.setmode(GPIO.BOARD)
-    blink()
+    button()
 
     GPIO.cleanup()
