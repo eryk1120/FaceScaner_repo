@@ -7,7 +7,7 @@ import time
 
 class Table():
 
-    def __init__(self, port='/dev/ttyUSB0', delay=0.001):
+    def __init__(self, port='/dev/ttyUSB0', delay=0.01):
 
         self.inter_delay = delay
         # define serial connection

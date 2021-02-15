@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import stolik
 
 cameras = {
 "0":{
@@ -9,14 +10,18 @@ cameras = {
     "trig":38
     },
 "2":{
+    "trig":36
+    },
+"3":{
     "trig":37
     }
+
 }
 
 projectors = {
 "0":{
-    "trig":36,
-    "ready":35
+    "trig":10,
+    "ready":8
     },
 "1":{
     "trig":33,
@@ -32,6 +37,8 @@ class head():
         self.c = cams
         self.p = projs
 
+
+
         for key in self.c:
             GPIO.setup(self.c[key]["trig"],GPIO.OUT)
 
@@ -44,45 +51,62 @@ class head():
     def __del__(self):
         GPIO.cleanup()
 
+    def UP1(self):
+        pass
+    def UP2(self):
+        pass
+    def BOT1(self):
+        pass
+    def BOT2(self):
+        GPIO.output(self.p['0']['trig'],GPIO.HIGH)
+        GPIO.output(self.p['0']['trig'],GPIO.LOW)
+        time.sleep(1)
+        #GPIO.wait_for_edge(self.p['0']['ready'], GPIO.FALLING, timeout=5000)
+
+        #GPIO.output(self.c['0']['trig'],GPIO.HIGH)
+        #GPIO.output(self.c['1']['trig'],GPIO.HIGH)
+        #GPIO.output(self.c['2']['trig'],GPIO.HIGH)
+        #GPIO.output(self.c['3']['trig'],GPIO.HIGH)
+
+        #time.sleep(0.001)
+
+        #GPIO.output(self.c['0']['trig'],GPIO.LOW)
+        #GPIO.output(self.c['1']['trig'],GPIO.LOW)
+        #GPIO.output(self.c['2']['trig'],GPIO.LOW)
+        #GPIO.output(self.c['3']['trig'],GPIO.HIGH)
+
+
     def RUN(self):
 
-        # first half
-
-        GPIO.output(self.p['1']['trig'],GPIO.HIGH)
-        GPIO.output(self.p['1']['trig'],GPIO.LOW)
-
-        if GPIO.input(self.p['0']['ready']):
-            print('entered this if')
-            GPIO.wait_for_edge(self.p['0']['ready'], GPIO.FALLING)
-
-        GPIO.output(self.c['0']['trig'],GPIO.HIGH)
-        GPIO.output(self.c['1']['trig'],GPIO.HIGH)
-
-        GPIO.output(self.c['0']['trig'],GPIO.LOW)
-        GPIO.output(self.c['1']['trig'],GPIO.LOW)
+        self.BOT2()
 
 
-        # second half
-        time.sleep(4)
+        
 
-        GPIO.output(self.p['1']['trig'],GPIO.HIGH)
-        GPIO.output(self.p['1']['trig'],GPIO.LOW)
 
-        if  GPIO.input(self.p['1']['ready']):
-            print('entered this if')
-            GPIO.wait_for_edge(self.p['1']['ready'], GPIO.FALLING)
 
-        GPIO.output(self.c['0']['trig'],GPIO.HIGH)
-        GPIO.output(self.c['2']['trig'],GPIO.HIGH)
-
-        GPIO.output(self.c['0']['trig'],GPIO.LOW)
-        GPIO.output(self.c['2']['trig'],GPIO.LOW)
+    def blink(self):
+        GPIO.setup(3,GPIO.OUT)
+        time.sleep(1)
+        GPIO.output(3,GPIO.HIGH)
+        time.sleep(0.1)
+        GPIO.output(3,GPIO.LOW)
+        time.sleep(1)
 
 
 if __name__ == "__main__":
     try:
         h = head(cameras,projectors)
-        h.RUN()
+
+
+
+        for i in range(1000000):
+            print(i)
+            time.sleep(0.014)
+            h.RUN()
+
+        h.blink()
+
         del h
     except KeyboardInterrupt:
         del h

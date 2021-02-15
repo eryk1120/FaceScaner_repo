@@ -9,24 +9,53 @@ from flask_api import status
 
 import json
 from stolik import Table
+from sequence_v1 import head
+
+
+cameras = {
+"0":{
+    "trig":40
+    },
+"1":{
+    "trig":38
+    },
+"2":{
+    "trig":36
+    },
+"3":{
+    "trig":37
+    }
+
+}
+
+projectors = {
+"0":{
+    "trig":13,
+    "ready":8
+    },
+"1":{
+    "trig":33,
+    "ready":32
+    }
+}
 
 class my_resource(Resource):
 
     def __init__(self):
-        self.known_tasks = ['RotLeft',"STOP"]
+        self.known_tasks = ['RotLeft','RotRight',"STOP","movenextpos","camegatrigger"]
 
         self.table = Table() # inicjalizacja obiektu sterującego
-        # inne obiekty reprezentujące
+        self.h = head(cameras,projectors)
 
     def __del__(self):
         del self.table
 
 
-    def put(self):
+    def post(self):
         data = request.get_json()
         print('got request')
         try:
-            task = data['task']
+            task = data['message:']
             print("task: {0}".format(task))
         except:
             return status.HTTP_501_NOT_IMPLEMENTED, "error while parsing given task"
@@ -36,9 +65,16 @@ class my_resource(Resource):
 
         if task == "RotLeft":
             self.table.rot_letf()
-
+        elif task == "RotRight":
+            self.table.rot_right()
         elif task=="STOP":
             self.table.stop()
+        elif task=="movenextpos":
+            self.h.blink()
+        elif task=="camegatrigger":
+            pass
+        else:
+            return status.HTTP_501_NOT_IMPLEMENTED, "unknown task given"
 
 
         return status.HTTP_202_ACCEPTED,"done with taks: {}".format(task)
@@ -54,7 +90,7 @@ def hello():
     return """ hello world  """
 
 if __name__=="__main__":
-    app.run(host='0.0.0.0',debug=True, port =5012)
+    app.run(host='0.0.0.0',debug=True, port =5000)
 
 
 
