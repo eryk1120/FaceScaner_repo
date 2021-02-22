@@ -5,16 +5,16 @@ import stolik
     
 cameras = {
     "0":{
-        "trig":40
+        "trig":38 
         },
     "1":{
-        "trig":38
+        "trig":37  
         },
     "2":{
-        "trig":36
+        "trig":36  
         },
     "3":{
-        "trig":37
+        "trig":40 
         }
 
     }
@@ -98,19 +98,14 @@ class Head():
     def calibrate(self,camera_id, projektor_id):
 
         GPIO.output(self.p[projektor_id]['trig'],GPIO.HIGH)
-        GPIO.output(self.c["0"]['trig'],GPIO.HIGH)   #1
-        GPIO.output(self.c["1"]['trig'],GPIO.HIGH)   #3
-        GPIO.output(self.c["2"]['trig'],GPIO.HIGH)   #2
-        GPIO.output(self.c["3"]['trig'],GPIO.HIGH)   #0
+        GPIO.output(self.c[camera_id]['trig'],GPIO.HIGH)  
+        
 
         time.sleep(0.001)
 
         GPIO.output(self.p[projektor_id]['trig'],GPIO.LOW)
-        GPIO.output(self.c["0"]['trig'],GPIO.LOW)
-        GPIO.output(self.c["1"]['trig'],GPIO.LOW)
-        GPIO.output(self.c["2"]['trig'],GPIO.LOW)
-        GPIO.output(self.c["3"]['trig'],GPIO.LOW)
-
+        GPIO.output(self.c[camera_id]['trig'],GPIO.LOW)
+        
 
 
 if __name__ == "__main__":
@@ -119,7 +114,7 @@ if __name__ == "__main__":
 
 
 
-        for i in range(10000000):
+        for i in range(15):
             print(i)
             h.calibrate("0","0")
             

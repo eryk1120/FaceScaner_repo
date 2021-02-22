@@ -138,12 +138,15 @@ def calibMessageWorker():
 
         cam_id =  item[2]
         print(cam_id)
+        
         cam_id = str(cam_id)
         
         #tu wstawiony kod aktywującą sekwencję dla konkretnego projektora i kamery
         print("trigger projector: %s and camera: %s" % (proj_id, cam_id))
-
-        head.calibrate(camera_id=cam_id,projektor_id=proj_id)
+        for i in range(15):
+            head.calibrate(camera_id=cam_id,projektor_id=proj_id)
+            time.sleep(0.02)
+            print(i)
 
         
         
