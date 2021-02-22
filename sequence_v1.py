@@ -2,34 +2,36 @@ import RPi.GPIO as GPIO
 import time
 import stolik
 
+    
 cameras = {
-"0":{
-    "trig":40
-    },
-"1":{
-    "trig":38
-    },
-"2":{
-    "trig":36
-    },
-"3":{
-    "trig":37
-    }
+    "0":{
+        "trig":40
+        },
+    "1":{
+        "trig":38
+        },
+    "2":{
+        "trig":36
+        },
+    "3":{
+        "trig":37
+        }
 
-}
+    }
 
 projectors = {
-"0":{
-    "trig":10,
-    "ready":8
-    },
-"1":{
-    "trig":33,
-    "ready":32
+    "0":{
+        "trig":10,
+        "ready":8
+        },
+    "1":{
+        "trig":33,
+        "ready":32
+        }
     }
-}
 
-class head():
+class Head():
+
 
     def __init__(self, cams, projs):
         GPIO.setmode(GPIO.BOARD)
@@ -86,24 +88,46 @@ class head():
 
 
     def blink(self):
-        GPIO.setup(3,GPIO.OUT)
+        GPIO.setup(8,GPIO.OUT)
         time.sleep(1)
-        GPIO.output(3,GPIO.HIGH)
+        GPIO.output(8,GPIO.HIGH)
         time.sleep(0.1)
-        GPIO.output(3,GPIO.LOW)
+        GPIO.output(8,GPIO.LOW)
         time.sleep(1)
+
+    def calibrate(self,camera_id, projektor_id):
+
+        GPIO.output(self.p[projektor_id]['trig'],GPIO.HIGH)
+        GPIO.output(self.c["0"]['trig'],GPIO.HIGH)
+        GPIO.output(self.c["1"]['trig'],GPIO.HIGH)
+        GPIO.output(self.c["2"]['trig'],GPIO.HIGH)
+        GPIO.output(self.c["3"]['trig'],GPIO.HIGH)
+
+        time.sleep(0.001)
+
+        GPIO.output(self.p[projektor_id]['trig'],GPIO.LOW)
+        GPIO.output(self.c["0"]['trig'],GPIO.LOW)
+        GPIO.output(self.c["1"]['trig'],GPIO.LOW)
+        GPIO.output(self.c["2"]['trig'],GPIO.LOW)
+        GPIO.output(self.c["3"]['trig'],GPIO.LOW)
+
 
 
 if __name__ == "__main__":
     try:
-        h = head(cameras,projectors)
+        h = Head(cameras,projectors)
 
 
 
-        for i in range(1000000):
+        for i in range(1):
             print(i)
-            time.sleep(0.014)
-            h.RUN()
+            h.calibrate("0","0")
+            
+            time.sleep(0.1)
+
+            
+            
+            #h.RUN()
 
         h.blink()
 
