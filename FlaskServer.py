@@ -2,45 +2,65 @@ from flask import Flask, jsonify
 from flask_restful import Resource, Api, abort, reqparse
 import threading, queue
 import time
+import sys
+import socket 
 
 from stolik import Table
 from sequence_v1 import Head
 
-app = Flask(__name__)
-api = Api(app)
+#sys.setcheckinterval(5)
 
+
+#[11,12,13,15]
 cameras = {
     "0":{
-        "trig":40
+        "trig":11
         },
     "1":{
-        "trig":38
+        "trig":12
         },
     "2":{
-        "trig":36
+        "trig":13
         },
     "3":{
-        "trig":37
+        "trig":15
         }
 
     }
 
+
 projectors = {
-    "0":{
-        "trig":10,
-        "ready":8
-        },
     "1":{
-        "trig":33,
+        "trig":37,
+        "ready":40
+        },
+    "0":{
+        "trig":29,
         "ready":32
         }
     }
 
 
+lights ={
+    "0":{
+        "trig":8,
+        }
+    }
+
+print('camera pins:', cameras)
+print('projector pins', projectors)
+print('lights pins',lights)
 
 
-table = Table()
-head = Head(cameras,projectors)
+#table = Table()
+#head = Head(cams=cameras,projs=projectors)
+
+
+app = Flask(__name__)
+api = Api(app)
+
+
+
 
         
 
@@ -114,11 +134,13 @@ liftWorkerThread.start()
 #               ------- KAMERY --------
 def triggerMessageWorker():
     while True:
+
         item = triggerQueue.get()
         print(item)
         #tu wstawiony kod4
         if item == "camegatrigger":
-            head.RUN()
+            #head.RUN()
+            pass
         triggerQueue.task_done()
 
 triggerQueue = queue.Queue()
@@ -128,27 +150,42 @@ triggerWorkerThread.start()
 
 
 #               ------- KALIBRACJA --------
+
+
+
+def ask_calibrate():
+    HOST = '127.0.0.1'  # The server's hostname or IP address
+    PORT = 6001        # The port used by the server
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT))
+        s.sendall(b'1:1')
+        data = s.recv(1024)
+
+    print('Received', repr(data))
+
 def calibMessageWorker():
     while True:
         item = calibQueue.get()
-        #proj_id = item[1]
-        proj_id=0
-        print(proj_id)
+        proj_id = item[1]
+        
         proj_id=str(proj_id)
 
         cam_id =  item[2]
-        print(cam_id)
+        
         
         cam_id = str(cam_id)
         
         #tu wstawiony kod aktywującą sekwencję dla konkretnego projektora i kamery
         print("trigger projector: %s and camera: %s" % (proj_id, cam_id))
-        for i in range(15):
-            head.calibrate(camera_id=cam_id,projektor_id=proj_id)
-            time.sleep(0.02)
-            print(i)
-
+        t0 = time.time()
         
+        #head.calibrate(camera_id=cam_id,projektor_id=proj_id)
+        ask_calibrate()           
+
+        t1=time.time()
+        t = t1-t0
+        print(f"took {t} to complete sequence")
         
         calibQueue.task_done()
 
@@ -228,6 +265,21 @@ stageQueue = queue.Queue()
 stageWorkerThread = threading.Thread(target=stageMessageWorker)
 stageWorkerThread.daemon = True
 stageWorkerThread.start()
+
+def restMessageWorker():
+    while True:
+        item = restQueue.get()
+        if len(item)== 3:
+            messagesset.switch_with_args(item[0], item[1], item[2])
+        else:
+            messagesset.switch(item[0])
+        restQueue.task_done()
+
+
+restQueue = queue.Queue()
+restWorkerThread = threading.Thread(target=restMessageWorker)
+restWorkerThread.daemon = True
+restWorkerThread.start()
 
 
 #      ------- PRZETWARZANIE KOMUNIKATÓW --------
@@ -319,13 +371,13 @@ class hardwareServer(Resource):
     def post(self):
         message = parser.parse_args()['message']
         if 'ctrl-param-a' in parser.parse_args() and parser.parse_args()['ctrl-param-a'] != None:
-            messagesset.switch_with_args(message,
-                               parser.parse_args()['ctrl-param-a'],
+            restQueue.put([message, parser.parse_args()['ctrl-param-a'],
+                               parser.parse_args()['ctrl-param-b']])
+            print(message, parser.parse_args()['ctrl-param-a'],
                                parser.parse_args()['ctrl-param-b'])
         else:
-            messagesset.switch(message)
+            restQueue.put([message])
         return jsonify(answer="OK");
-
 
 
 api.add_resource(hardwareServer, '/hardwareServer',
@@ -333,3 +385,16 @@ api.add_resource(hardwareServer, '/hardwareServer',
 
 if __name__ == '__main__':
     app.run(debug=True, host= '0.0.0.0', port= 8002)
+    #restQueue.put(["calibratetrigger",1,1])
+    #for _ in range(100):
+        #head.calibrate('0','0')
+
+
+
+'''
+
+curl -X POST http://biom1.local:8002/hardwareServer -H "Content-Type:application/json"  -d '{"message": "calibratetrigger",  "ctrl-param-a" : "0" ,  "ctrl-param-b" : "1" }'
+
+
+
+'''
