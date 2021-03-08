@@ -64,21 +64,21 @@ class Head():
 
         print('done <3')
 
-        GPIO.add_event_detect(self.p['1']["ready"], GPIO.RISING)
-        GPIO.add_event_callback(self.p['1']["ready"], self.calback)
+        #GPIO.add_event_detect(self.p['1']["ready"], GPIO.RISING)
+        #GPIO.add_event_callback(self.p['1']["ready"], self.calback)
     
     
     def calback(self,pin):
-        print("BAM!")
-        print(f"USED: {self.cam_flag}")
-        print(id(self))
+        #print("BAM!")
+        #print(f"USED: {self.cam_flag}")
+        #print(id(self))
+        pass
+        #GPIO.output(self.c[self.cam_flag]['trig'],GPIO.HIGH)
+        #print(self.cam_flag)
+        #GPIO.output(self.c[self.cam_flag]['trig'],GPIO.LOW)
 
-        GPIO.output(self.c[self.cam_flag]['trig'],GPIO.HIGH)
-        print(self.cam_flag)
-        GPIO.output(self.c[self.cam_flag]['trig'],GPIO.LOW)
 
-
-    def listener(self,port=6003, host='127.0.0.1'):
+    def listener(self,port=6007, host='127.0.0.1'):
         while True:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.bind((host, port))
@@ -94,18 +94,36 @@ class Head():
                             break
 
                         ids = data.decode('UTF-8')
-                        proj, cams = ids.split(':')
-                        cams = cams.split(';')
-                        print(f'cams: {cams}')
-                        print(f'proj:{proj}')
-                        t0 = time.time()
+                        task, proj, cams = ids.split(':')
 
-                        for cam in cams:
-                            self.calibrate(cam,proj)
+                        print(f'given task is: {task}')
 
-                        t1= time.time()
-                        t = t1-t0
-                        print(f"took {t} to complete sequence")
+                        if task == '[S]':
+                            print(f'begining task: {task}')
+                            
+                            t0 = time.time()
+
+                            self.UP()
+                            time.sleep(0.05)
+                            self.BOT()
+
+                            t1= time.time()
+                            t = t1-t0
+                            print(f"took {t} to complete sequence")
+
+                        elif task =='[C]':
+                            print(f'begining task: {task}')
+                            cams = cams.split(';')
+                            print(f'cams: {cams}')
+                            print(f'proj:{proj}')
+                            t0 = time.time()
+
+                            for cam in cams:
+                                self.calibrate(cam,proj)
+
+                            t1= time.time()
+                            t = t1-t0
+                            print(f"took {t} to complete sequence")
                         
                         conn.sendall(b'xDDD')
     
@@ -119,16 +137,36 @@ class Head():
     def __del__(self):
         GPIO.cleanup()
 
-    def UP1(self):
-        pass
-    def UP2(self):
-        pass
-    def BOT1(self):
-        pass
-    def BOT2(self):
-        GPIO.output(self.p['0']['trig'],GPIO.HIGH)
-        time.sleep(0.005)
-        GPIO.output(self.p['0']['trig'],GPIO.LOW)
+    def UP(self):
+        for _ in range(15):
+            GPIO.output(self.p['1']['trig'],GPIO.HIGH)
+            GPIO.output(self.p['1']['trig'],GPIO.LOW)
+
+            GPIO.output(self.c['0']['trig'],GPIO.HIGH)
+            GPIO.output(self.c['1']['trig'],GPIO.HIGH)
+            GPIO.output(self.c['3']['trig'],GPIO.HIGH)
+            print("XD")
+            GPIO.output(self.c['0']['trig'],GPIO.LOW)
+            GPIO.output(self.c['1']['trig'],GPIO.LOW)
+            GPIO.output(self.c['3']['trig'],GPIO.LOW)
+
+            time.sleep(0.04)
+    
+
+    def BOT(self):
+        for _ in range(15):
+            GPIO.output(self.p['1']['trig'],GPIO.HIGH)
+            GPIO.output(self.p['1']['trig'],GPIO.LOW)
+
+            GPIO.output(self.c['1']['trig'],GPIO.HIGH)
+            GPIO.output(self.c['2']['trig'],GPIO.HIGH)
+            print("XD")
+            GPIO.output(self.c['1']['trig'],GPIO.LOW)
+            GPIO.output(self.c['2']['trig'],GPIO.LOW)
+
+            time.sleep(0.04)
+
+
 
     def RUN(self):
 
@@ -165,9 +203,9 @@ class Head():
 
 
             #sequential camera trigerr 
-            #GPIO.output(self.c[self.cam_flag]['trig'],GPIO.HIGH)
-            #print(self.cam_flag)
-            #GPIO.output(self.c[self.cam_flag]['trig'],GPIO.LOW)
+            GPIO.output(self.c[self.cam_flag]['trig'],GPIO.HIGH)
+            print(self.cam_flag)
+            GPIO.output(self.c[self.cam_flag]['trig'],GPIO.LOW)
 
             time.sleep(0.04)
 
@@ -188,6 +226,9 @@ if __name__ == "__main__":
         h = Head(cameras,projectors)
 
         h.listener()
+        #h.BOT()
+        #time.sleep(1)
+        #h.UP()
 
         del h
 

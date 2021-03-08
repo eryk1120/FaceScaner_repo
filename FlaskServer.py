@@ -6,53 +6,14 @@ import sys
 import socket 
 
 from stolik import Table
-from sequence_v1 import Head
-
-#sys.setcheckinterval(5)
 
 
-#[11,12,13,15]
-cameras = {
-    "0":{
-        "trig":11
-        },
-    "1":{
-        "trig":12
-        },
-    "2":{
-        "trig":13
-        },
-    "3":{
-        "trig":15
-        }
-
-    }
+HOST = '127.0.0.1'  # The server's hostname or IP address
+PORT = 6007        # The port used by the server
 
 
-projectors = {
-    "1":{
-        "trig":37,
-        "ready":40
-        },
-    "0":{
-        "trig":29,
-        "ready":32
-        }
-    }
 
-
-lights ={
-    "0":{
-        "trig":8,
-        }
-    }
-
-print('camera pins:', cameras)
-print('projector pins', projectors)
-print('lights pins',lights)
-
-
-#table = Table()
+table = Table()
 #head = Head(cams=cameras,projs=projectors)
 
 
@@ -130,16 +91,31 @@ liftWorkerThread = threading.Thread(target=liftMessageWorker)
 liftWorkerThread.daemon = True
 liftWorkerThread.start()
 
-
 #               ------- KAMERY --------
+
+
+def ask_cameras():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT))
+        s.sendall(b'[S]:-:-')
+        data = s.recv(1024)
+
+    print('Received', repr(data))
+
+
+
+
+
 def triggerMessageWorker():
     while True:
 
         item = triggerQueue.get()
         print(item)
         #tu wstawiony kod4
-        if item == "camegatrigger":
-            #head.RUN()
+        print('here im')
+        if item == "cameratrigger":
+            print('------------')
+            ask_cameras()
             pass
         triggerQueue.task_done()
 
@@ -154,10 +130,8 @@ triggerWorkerThread.start()
 
 
 def ask_calibrate(cam,proj):
-    HOST = '127.0.0.1'  # The server's hostname or IP address
-    PORT = 6003        # The port used by the server
-
-    mess = f'{proj}:{cam}'
+    
+    mess = f'[C]:{proj}:{cam}'
     mess = str.encode(mess)
 
 
@@ -174,6 +148,7 @@ def calibMessageWorker():
         item = calibQueue.get()
         proj_id = item[1]
         
+        
         proj_id=str(proj_id)
 
         cam_id =  item[2]
@@ -183,6 +158,8 @@ def calibMessageWorker():
         
         #tu wstawiony kod aktywującą sekwencję dla konkretnego projektora i kamery
         print("trigger projector: %s and camera: %s" % (proj_id, cam_id))
+
+        proj_id = 1
         t0 = time.time()
         
         #head.calibrate(camera_id=cam_id,projektor_id=proj_id)
@@ -244,6 +221,7 @@ class stageClass:
                 table.rot_right()
                 print( "nextpos")
                 print("nextpos")
+                ask_cameras()
 
 
         else:
@@ -295,8 +273,8 @@ class messagesset:
             return messagesset.systemup();
         if message == "systemdown":
             return messagesset.systemdown();
-        if message == "camegatrigger":
-            return messagesset.camegatrigger();
+        if message == "cameratrigger":
+            return messagesset.cameratrigger();
         if message == "chairlefths":
             return messagesset.chairlefths();
         if message == "chairrighths":  
@@ -322,8 +300,8 @@ class messagesset:
         return;
 
     @staticmethod
-    def camegatrigger():
-        triggerQueue.put("camegatrigger")
+    def cameratrigger():
+        triggerQueue.put("cameratrigger")
         triggerQueue.join() 
 
         return;
@@ -366,6 +344,12 @@ class messagesset:
     @staticmethod
     def chairrighths():
         stageQueue.put("chairrighths")
+        stageQueue.join()
+        return;
+
+    @staticmethod
+    def chairrightls():
+        stageQueue.put("chairrightls")
         stageQueue.join()
         return;
 

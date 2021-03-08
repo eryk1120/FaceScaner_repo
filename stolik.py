@@ -58,7 +58,7 @@ class Table():
         time.sleep(self.inter_delay)
         self.ser.write(b'\xc1')
         time.sleep(self.inter_delay)
-        self.ser.write(b'\x06')
+        self.ser.write(b'\x09')
         time.sleep(self.inter_delay)
         self.ser.write(b'\x00')
 
@@ -75,7 +75,7 @@ class Table():
         time.sleep(self.inter_delay)
         self.ser.write(b'\x81')
         time.sleep(self.inter_delay)
-        self.ser.write(b'\x06')
+        self.ser.write(b'\x09')
         time.sleep(self.inter_delay)
         self.ser.write(b'\x00')
 
