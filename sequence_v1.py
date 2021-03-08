@@ -22,8 +22,8 @@ cameras = {
 
 projectors = {
     "1":{
-        "trig":40,
-        "ready":38
+        "trig":38,
+        "ready":40
         },
     "0":{
         "trig":37,
@@ -64,8 +64,8 @@ class Head():
 
         print('done <3')
 
-        GPIO.add_event_detect(self.p['0']["ready"], GPIO.RISING)
-        GPIO.add_event_callback(self.p['0']["ready"], self.calback)
+        GPIO.add_event_detect(self.p['1']["ready"], GPIO.RISING)
+        GPIO.add_event_callback(self.p['1']["ready"], self.calback)
     
     
     def calback(self,pin):
@@ -78,7 +78,7 @@ class Head():
         GPIO.output(self.c[self.cam_flag]['trig'],GPIO.LOW)
 
 
-    def listener(self,port=6001, host='127.0.0.1'):
+    def listener(self,port=6003, host='127.0.0.1'):
         while True:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.bind((host, port))
@@ -96,10 +96,13 @@ class Head():
                         ids = data.decode('UTF-8')
                         proj, cams = ids.split(':')
                         cams = cams.split(';')
+                        print(f'cams: {cams}')
                         print(f'proj:{proj}')
                         t0 = time.time()
+
                         for cam in cams:
                             self.calibrate(cam,proj)
+
                         t1= time.time()
                         t = t1-t0
                         print(f"took {t} to complete sequence")
@@ -144,13 +147,27 @@ class Head():
     def calibrate(self,camera_id, projektor_id):
 
         print('begining calibrating')
+
         self.cam_flag = camera_id
+
         print(f"CHANGED: {self.cam_flag}")
+
+        print("trigger projector: %s and camera: %s" % (projektor_id, camera_id))
+
+        print("PINS projector: %s and camera: %s" % (self.p[projektor_id]['trig'], self.c[self.cam_flag]['trig']))
+
+        
 
         for _ in range(15):
 
             GPIO.output(self.p[projektor_id]['trig'],GPIO.HIGH)
             GPIO.output(self.p[projektor_id]['trig'],GPIO.LOW)
+
+
+            #sequential camera trigerr 
+            #GPIO.output(self.c[self.cam_flag]['trig'],GPIO.HIGH)
+            #print(self.cam_flag)
+            #GPIO.output(self.c[self.cam_flag]['trig'],GPIO.LOW)
 
             time.sleep(0.04)
 

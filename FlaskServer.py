@@ -153,13 +153,18 @@ triggerWorkerThread.start()
 
 
 
-def ask_calibrate():
+def ask_calibrate(cam,proj):
     HOST = '127.0.0.1'  # The server's hostname or IP address
-    PORT = 6001        # The port used by the server
+    PORT = 6003        # The port used by the server
+
+    mess = f'{proj}:{cam}'
+    mess = str.encode(mess)
+
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT))
-        s.sendall(b'1:1')
+        s.sendall(mess)
+        #s.sendall(b'1:1;2;3')
         data = s.recv(1024)
 
     print('Received', repr(data))
@@ -181,7 +186,7 @@ def calibMessageWorker():
         t0 = time.time()
         
         #head.calibrate(camera_id=cam_id,projektor_id=proj_id)
-        ask_calibrate()           
+        ask_calibrate(cam=cam_id,proj=proj_id)           
 
         t1=time.time()
         t = t1-t0
