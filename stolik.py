@@ -50,8 +50,8 @@ class Table():
         self.ser.write(b'\x00')
 
         print(self.ser.read())
-        print(self.ser.read())
-        print(self.ser.read())
+        #print(self.ser.read())
+        #print(self.ser.read())
 
 
     def rot_letf(self):
@@ -139,16 +139,16 @@ if __name__=='__main__':
     try:
         stolik = Table()
 
-        for i  in range(3):
-            print('LEFT')
-            stolik.rot_letf()
-            print('RIGHT')
-            stolik.rot_right()
+        for i  in range(1):
+            #print('LEFT')
+            #stolik.rot_letf()
+            #print('RIGHT')
+            stolik.tick_right()
 
 
-        stolik.cont_right()
-        time.sleep(5)
-        stolik.stop()
+        #stolik.cont_right()
+        #time.sleep(5)
+        #stolik.stop()
 
         del stolik
 

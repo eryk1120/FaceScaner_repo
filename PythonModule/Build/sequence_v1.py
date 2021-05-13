@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 import stolik
-
 import socket
 
 cameras = {
@@ -50,8 +49,6 @@ class Head():
 
         self.c = cams
         self.p = projs
-        self.l = lights
-
 
         self.cam_flag = None
 
@@ -64,9 +61,6 @@ class Head():
         for key in self.p:
             GPIO.setup(self.p[key]["trig"],GPIO.OUT)
             GPIO.setup(self.p[key]["ready"],GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-        for key in self.l:
-            GPIO.setup(self.l[key]["trig"],GPIO.OUT)
 
         print('done <3')
 
@@ -144,9 +138,9 @@ class Head():
         GPIO.cleanup()
 
     def UP(self):
-        for _ in range(14):
-            GPIO.output(self.p['0']['trig'],GPIO.HIGH)
-            GPIO.output(self.p['0']['trig'],GPIO.LOW)
+        for _ in range(15):
+            GPIO.output(self.p['1']['trig'],GPIO.HIGH)
+            GPIO.output(self.p['1']['trig'],GPIO.LOW)
 
             GPIO.output(self.c['0']['trig'],GPIO.HIGH)
             GPIO.output(self.c['1']['trig'],GPIO.HIGH)
@@ -157,25 +151,10 @@ class Head():
             GPIO.output(self.c['3']['trig'],GPIO.LOW)
 
             time.sleep(0.04)
-
-        GPIO.output(self.p['0']['trig'],GPIO.HIGH)
-        GPIO.output(self.p['0']['trig'],GPIO.LOW)
-
-        GPIO.output(self.l['0']['trig'],GPIO.HIGH)
-
-        GPIO.output(self.c['0']['trig'],GPIO.HIGH)
-        GPIO.output(self.c['1']['trig'],GPIO.HIGH)
-        GPIO.output(self.c['3']['trig'],GPIO.HIGH)
-        time.sleep(10/1000)
-
-        GPIO.output(self.l['0']['trig'],GPIO.LOW)
-
-        GPIO.output(self.c['0']['trig'],GPIO.LOW)
-        GPIO.output(self.c['1']['trig'],GPIO.LOW)
-        GPIO.output(self.c['3']['trig'],GPIO.LOW)
+    
 
     def BOT(self):
-        for _ in range(14):
+        for _ in range(15):
             GPIO.output(self.p['1']['trig'],GPIO.HIGH)
             GPIO.output(self.p['1']['trig'],GPIO.LOW)
 
@@ -186,16 +165,6 @@ class Head():
             GPIO.output(self.c['2']['trig'],GPIO.LOW)
 
             time.sleep(0.04)
-        GPIO.output(self.p['1']['trig'],GPIO.HIGH)
-        GPIO.output(self.p['1']['trig'],GPIO.LOW)
-
-        GPIO.output(self.l['0']['trig'],GPIO.HIGH)
-        GPIO.output(self.c['1']['trig'],GPIO.HIGH)
-        GPIO.output(self.c['2']['trig'],GPIO.HIGH) 
-        time.sleep(10/1000)
-        GPIO.output(self.l['0']['trig'],GPIO.LOW)
-        GPIO.output(self.c['1']['trig'],GPIO.LOW)
-        GPIO.output(self.c['2']['trig'],GPIO.LOW) 
 
 
 
@@ -227,7 +196,7 @@ class Head():
 
         
 
-        for _ in range(14):
+        for _ in range(15):
 
             GPIO.output(self.p[projektor_id]['trig'],GPIO.HIGH)
             GPIO.output(self.p[projektor_id]['trig'],GPIO.LOW)
@@ -240,16 +209,7 @@ class Head():
 
             time.sleep(0.04)
 
-        GPIO.output(self.p[projektor_id]['trig'],GPIO.HIGH)
-        GPIO.output(self.p[projektor_id]['trig'],GPIO.LOW)
-
-		
-        #print("here")# with flash  
-        GPIO.output(self.l['0']['trig'],GPIO.HIGH)
-        GPIO.output(self.c[self.cam_flag]['trig'],GPIO.HIGH)
-        time.sleep(10/1000)
-        GPIO.output(self.l['0']['trig'],GPIO.LOW)
-        GPIO.output(self.c[self.cam_flag]['trig'],GPIO.LOW)
+        
 
         
         
@@ -263,7 +223,6 @@ class Head():
 
 if __name__ == "__main__":
     try:
-
         h = Head(cameras,projectors)
 
         h.listener()

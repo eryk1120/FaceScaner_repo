@@ -1,0 +1,3 @@
+/home/pi/PythonModule/Build/CMakeFiles/rebuild_cache.dir
+/home/pi/PythonModule/Build/CMakeFiles/fotosfera.dir
+/home/pi/PythonModule/Build/CMakeFiles/edit_cache.dir

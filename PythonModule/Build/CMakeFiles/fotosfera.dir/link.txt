@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC   -shared  -o fotosfera.so CMakeFiles/fotosfera.dir/fotosfera.cpp.o CMakeFiles/fotosfera.dir/usb2lin06Controler.cpp.o CMakeFiles/fotosfera.dir/usb2linException.cpp.o CMakeFiles/fotosfera.dir/statusReport.cpp.o /usr/lib/arm-linux-gnueabihf/libboost_python.so /usr/lib/arm-linux-gnueabihf/libpython2.7.so /usr/lib/arm-linux-gnueabihf/libusb-1.0.so 

@@ -9,8 +9,8 @@ from stolik import Table
 
 
 HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 6007        # The port used by the server
-
+PORT_cameras = 6000        # The port used by the server
+PORT_lifter = 6001
 
 
 table = Table()
@@ -73,16 +73,24 @@ class liftClass:
 
 liftObject = liftClass();    
 
+def ask_lifter(message="STOP"):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT_lifter))
+        s.sendall(str.encode(message))
+        data = s.recv(1024)
 
+    print('Received', repr(data))
 #               ------- PODNOŚNIK --------
 def liftMessageWorker():
 
     while True:
         item = liftQueue.get()
         if item == "systemup":
+            ask_lifter("UP")
             liftObject.changeState("up")
             #stopMovementUp.clear();
         if item == "systemdown":
+            ask_lifter("DOWN")
             liftObject.changeState("down")
         liftQueue.task_done()
 
@@ -96,7 +104,7 @@ liftWorkerThread.start()
 
 def ask_cameras():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
+        s.connect((HOST, PORT_cameras))
         s.sendall(b'[S]:-:-')
         data = s.recv(1024)
 
@@ -136,7 +144,7 @@ def ask_calibrate(cam,proj):
 
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
+        s.connect((HOST, PORT_cameras))
         s.sendall(mess)
         #s.sendall(b'1:1;2;3')
         data = s.recv(1024)
@@ -159,7 +167,7 @@ def calibMessageWorker():
         #tu wstawiony kod aktywującą sekwencję dla konkretnego projektora i kamery
         print("trigger projector: %s and camera: %s" % (proj_id, cam_id))
 
-        proj_id = 1
+        proj_id = int(proj_id)
         t0 = time.time()
         
         #head.calibrate(camera_id=cam_id,projektor_id=proj_id)
@@ -182,22 +190,60 @@ calibWorkerThread.start()
 class stageClass:
     def __init__(self):
         self.state = "stop"
-        self.active = [0];
+        self.active = [0]
         self.interval = 1 #czas jednej iteracji podtrzymania
         internalEvent = threading.Event()
         internalEvent.clear()
+
+        def moveloop():
+            while True:
+                if self.state == "right":
+                    print("initializing turnung RIGHT")
+                    table.tick_right()
+                    time.sleep(0.1)
+                elif self.state == "left":
+                    print("initializing turnung LEFT")
+                    table.tick_left()
+                    time.sleep(0.1)
+                else:
+                    pass
+
+
         def internalloop():
             while True:
+                
+                
+                
                 if(self.active[0] > 0 and ( self.state == "right" or self.state == "left")):
-                    while not internalEvent.wait(self.interval):
-                        self.active[0] = self.active[0]  -1
-                        if self.active[0] == 0:
-                            self.changeState("stop")
-                            break
+
+                    if self.state == "right":
+                        print("initializing turnung RIGHT")
+                        table.tick_right()
+                        time.sleep(0.1)
+                    if self.state == "left":
+                        print("initializing turnung LEFT")
+                        table.tick_left()
+                        time.sleep(0.1)
+
+
+                    #while not internalEvent.wait(self.interval):
+                    self.active[0] = self.active[0]  -1
+
+                        
+
+                    if self.active[0] == 0:
+                        self.changeState("stop")
+                        table.stop()
+                    #    break
 
         loopThread = threading.Thread(target=internalloop)
+        #moveThread = threading.Thread(target=moveloop)
+
         loopThread.daemon = True
+        #moveThread.daemon = True
+
         loopThread.start()
+        #moveThread.start()
 
     def changeState(self, newState):
         if self.state != newState or  newState == "nextpos":
@@ -206,14 +252,14 @@ class stageClass:
                 self.active[0] = 0;
                 print( "stop")
             if newState == "right":
-                table.rot_right()
+                #table.cont_right()
                 self.state = "right"
-                self.active[0] = 2;
-                print( "right xDDDDDDDDD")
+                self.active[0] = 1;
+                print( "right")
             if newState == "left":
-                table.rot_letf()
+                #table.cont_letf()
                 self.state = "left"
-                self.active[0] = 2;
+                self.active[0] = 1;
                 print( "left")
             if newState == "nextpos":
                 self.state = "nextpos"
@@ -222,6 +268,12 @@ class stageClass:
                 print( "nextpos")
                 print("nextpos")
                 ask_cameras()
+            if newState == "nextposnotrigger":
+                self.state = "nextposnotrigger"
+                self.active[0] = 0;
+                print( "nextposnotrigger")
+                table.rot_right()
+                time.sleep(10)
 
 
         else:
@@ -242,6 +294,8 @@ def stageMessageWorker():
             stageObject.changeState("right")
         if item == "movenextpos":
             stageObject.changeState("nextpos")
+        if item == "movenextposnotrigger":
+            stageObject.changeState("nextposnotrigger")
         stageQueue.task_done()
 
 stageQueue = queue.Queue()
@@ -285,6 +339,8 @@ class messagesset:
             return messagesset.chairrightls();
         if message == "movenextpos":  
             return messagesset.movenextpos();
+        if message == "movenextposnotrigger":  
+            return messagesset.movenextposnotrigger();
         return;
 
     @staticmethod
@@ -327,6 +383,12 @@ class messagesset:
     @staticmethod
     def movenextpos():
         stageQueue.put("movenextpos")
+        stageQueue.join() 
+        return;
+
+    @staticmethod
+    def movenextposnotrigger():
+        stageQueue.put("movenextposnotrigger")
         stageQueue.join() 
         return;
 
